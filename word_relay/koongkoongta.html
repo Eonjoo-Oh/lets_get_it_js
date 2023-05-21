@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>쿵쿵따</title>
+</head>
+<body>
+	<div><span id="order"></span>님의 차례입니다</div>
+	<div>쿵쿵따리 쿵쿵따 "<span id="word"></span>" 쿵쿵따</div>
+	<input type="text" onkeyup="enterkey()">
+	<button>입력</button>
+<script>
+	const number = Number(prompt("몇 명이 참가하나요?"));
+	const $order = document.querySelector('#order');
+	const $button = document.querySelector('button');
+	const $input = document.querySelector('input');
+	const $word = document.querySelector('#word');
+	var players = new Array(); //prompt로 받은 player들 저장하는 배열
+	let name; //prompt로 받는 값
+	let playersOrder = 0; //몇 번째 플레이어인지 표시하기 위한 변수
+	let word; //이전에 입력받은 단어 (제시어)
+	let newWord; //입력받은 단아
+	if (!number || number < 2) {
+		alert("0");
+	} //인원수가 2명보다 작거나 취소를 눌렀을 경우 종료하도록 함
+	for(let i = 1; i < number + 1; i++)
+	{
+		name = prompt(i + '번째 참가자의 이름을 입력하세요');
+		players.push(name);
+	}//참가자의 수만큼 prompt를 입력받음
+	$order.textContent = players[playersOrder];
+	$input.focus();
+	
+	const onClickButton = () => {
+		if ((!word && newWord.length === 3) || (newWord.length === 3 && word[word.length - 1] === newWord[0])) {
+			word = newWord;
+			$word.textContent = word;
+			playersOrder++;
+			if (playersOrder === number) {
+				playersOrder = 0;
+			}
+			$order.textContent = players[playersOrder];
+		}
+		else {
+			alert("틀렸습니다!");
+		}
+		$input.value = '';
+		$input.focus();
+	};
+
+	const onInput = (event) => {
+		newWord = event.target.value;
+	};
+
+	function enterkey() {
+		if (window.event.keyCode = 13) {
+			onClickButton();
+		}
+	}//엔터키눌렀을 때 확인버튼 누르는것과 같은 동작하고 싶음
+
+	$button.addEventListener('click', onClickButton);
+	$input.addEventListener('input', onInput);
+</script>
+</body>
+</html>
