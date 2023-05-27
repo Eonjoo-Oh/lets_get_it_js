@@ -1,0 +1,97 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>숫자야구</title>
+</head>
+<body>
+<form id="form">
+	<input type="text" id="input">
+	<button>확인</button>
+</form>
+<div id="logs"></div>
+<script>
+	const $input = document.querySelector('#input');
+	const $form = document.querySelector('#form');
+	const $logs = document.querySelector('#logs');
+
+	const out = 0;
+	const numbers = []; //단순히 값들만 모을때는 [] 배열, 각각의 값에 이름을 붙여야하면 객체의 모음으로 {}
+	for (let n = 0; n < 9; n += 1) {
+		numbers.push(n + 1);
+	}//반복문을 써보기 위해 numbers에 인수를 넣는 연습
+	const answer = []
+	for (let n = 0; n < 4; n++) {
+		const index = Math.floor(Math.random() * (numbers.length)); //0-8정수, length가 점점 짧아지니 index도 줄여야 됨
+		answer.push(numbers[index]);
+		numbers.splice(index, 1); //중복 숫자가 생기지 않게 뽑은것은 answer에 push하면서 원래 배열에서는 지워주기
+	}
+	console.log(answer);
+
+	const tries = [];
+	function checkInput(input) {
+		if (input.length !== 4) {
+			return alert('4자리 숫자를 입력해 주세요.');
+		}
+		if (new Set(input).size !== 4) {
+			return alert('중복되지 않게 입력해 주세요.');
+		}
+		if (tries.includes(input)) {
+			return alert('이미 시도한 값입니다.');
+		}
+		return true;
+	} //검사하는 코드. 함수로 잘 쪼갤수록 보기 좋은 코드가 된다.
+
+	$form.addEventListener('submit', (event) => {
+		//form에 있는 버튼을 누르면 submit이라는 event가 발생
+		event.preventDefault(); //기본동작 막는 매서드
+		const value = $input.value;
+		//$input.value대신 event.target[0]처럼 쓸 수도 있다.
+		$input.value = '';//입력하고 나면 입력창을 지워준다.
+		if (!checkInput(value)) {
+			return;
+		} //입력값 문제 없음
+		if (answer.join('') === value) {
+			$logs.textContent = '홈런!';
+			return;
+		}
+		if (tries.length >= 9) {
+			const message = document.createTextNode(`패배! 정답은 ${answer.join('')}`);
+			$logs.appendChild(message);
+			// $logs.appendChild(document.createTextNode(`패배! 정답은 ${answer.join('')}`)); 이렇게 써도 됨
+			return;
+		}
+		let strike = 0;
+		let ball = 0;
+		for (let i = 0; i < answer.length; i++) {
+			const index = value.indexOf(answer[i]);
+			if (index > -1) {
+				if (index === i) {
+					strike += 1;
+				} else {
+					ball += 1;
+				}
+			}
+		}
+		if (strike === 0 && ball === 0)
+		{
+			$logs.append('아웃!', document.createElement('br'));
+			out++;
+			/*if (out === 3)
+			{
+				$logs.append(`쓰리 아웃! 정답은 ${answer.join('')}`);
+			}*/ //쓰리아웃 시 게임종료 removeEventListner배우면 구현할 수 있ㄷㅏ
+		}
+		else
+			$logs.append(`${value}: ${strike} 스트라이크 ${ball} 볼`, document.createElement('br')); //문자열과 br태그 추가. 문자열은 createTextNode안만들고 그냥 넣어도 됨
+		tries.push(value);
+	});
+		/*} else {
+
+		} //에러있음 (alert의 return값은 undefined니까 false)
+	}); //입력값을 검사하는 코드*/
+/* 다음 과제
+	쓰리 아웃시 게임 종료, 컬러 넣기
+*/
+</script>
+</body>
+</html>
